@@ -725,6 +725,9 @@ func BuildProxy(config *Config) *goproxy.ProxyHttpServer {
 		goproxy.WithHttpsProxyAddr(config.UpstreamHttpsProxyAddr),
 		goproxy.WithAddServerIpHeader(config.AddServerIpHeader),
 	)
+	if config.NonproxyHandler != nil {
+		proxy.NonproxyHandler = config.NonproxyHandler
+	}
 	proxy.Verbose = false
 	configureTransport(proxy.Tr, config)
 

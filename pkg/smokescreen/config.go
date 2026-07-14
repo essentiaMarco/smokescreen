@@ -96,6 +96,7 @@ type Config struct {
 	StatsServer                  *StatsServer // StatsServer
 	ConnTracker                  conntrack.TrackerInterface
 	Healthcheck                  http.Handler // User defined http.Handler for optional requests to a /healthcheck endpoint
+	NonproxyHandler              http.Handler // User defined http.Handler for origin-form, non-proxy requests
 	ShuttingDown                 atomic.Value // Stores a boolean value indicating whether the proxy is actively shutting down
 
 	// Network type to use when performing DNS lookups. Must be one of "ip", "ip4" or "ip6".

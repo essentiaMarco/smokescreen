@@ -23,12 +23,25 @@ func defaultRoleFromRequest(req *http.Request) (string, error) {
 	return req.TLS.PeerCertificates[0].Subject.CommonName, nil
 }
 
+func deploymentHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.URL.Path {
+	case "/", "/health", "/healthcheck", "/healthz", "/livez", "/readyz":
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("OK\n"))
+	default:
+		http.NotFound(w, r)
+	}
+}
+
 func main() {
 	conf, err := cmd.NewConfiguration(nil, nil)
 	if err != nil {
 		logrus.Fatalf("Could not create configuration: %v", err)
 	} else if conf != nil {
 		conf.RoleFromRequest = defaultRoleFromRequest
+		conf.Healthcheck = http.HandlerFunc(deploymentHandler)
+		conf.NonproxyHandler = http.HandlerFunc(deploymentHandler)
 
 		conf.Log.Formatter = &logrus.JSONFormatter{}
 
